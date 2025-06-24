@@ -1,11 +1,13 @@
 import { clerkMiddleware } from '@clerk/nextjs/server';
 
-export default clerkMiddleware();
+export default clerkMiddleware({
+  publicRoutes: ['/api/webhook'], // ✅ same public route
+});
 
 export const config = {
   matcher: [
-    '/((?!_next|.*\\..*).*)', // Skip static files and Next.js internals
-    '/',                      // Run middleware on index page
-    '/(api|trpc)(.*)',        // Run middleware on API routes
+    '/((?!_next|.*\\..*).*)',  // ✅ functionally the same matcher
+    '/',
+    '/(api|trpc)(.*)',
   ],
 };
