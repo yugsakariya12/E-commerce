@@ -97,7 +97,18 @@ import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { createOrUpdateUser, deleteUser } from "@/app/(root)/lib/actions/user";
 
+export async function GET() {
+  console.log("✅ Webhook GET route hit");
+  return new Response("Webhook GET OK", { status: 200 });
+}
+
+
 export async function POST(req) {
+console.log("📦 Incoming POST to webhook");
+
+  
+  
+  console.log("hitting")
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
 
   if (!WEBHOOK_SECRET) {
@@ -115,6 +126,7 @@ export async function POST(req) {
   }
 
   const payload = await req.json();
+  console.log("🧾 Payload:", payload);
   const body = JSON.stringify(payload);
 
   const wh = new Webhook(WEBHOOK_SECRET);
