@@ -12,10 +12,14 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+  
+  signInUrl="/sign-in"
+  signUpUrl="/sign-up"
+>
       <html lang="en">
         <body className={inter.className}  >
-                  <Navbar/>
+                  {/* <Navbar/> */}
               {children}
               
             
