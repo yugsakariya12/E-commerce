@@ -3,7 +3,7 @@
 import { Search } from "@mui/icons-material"
 import { ShoppingBag } from "@mui/icons-material"
 import { Info } from "@mui/icons-material"
-import Profilepart from "../components/profilepart"
+
 import { useState } from "react"
 
 
