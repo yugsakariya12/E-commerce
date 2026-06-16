@@ -1,7 +1,9 @@
-import { ClerkProvider } from "@clerk/nextjs";
+// app/layout.js
 import { Inter } from "next/font/google";
 import "../globals.css";
+ // ✅ new import
 import Navbar from "../components/Navbar";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata = {
   title: "Vibe Zone",
@@ -12,19 +14,13 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider
-  
-  signInUrl="/sign-in"
-  signUpUrl="/sign-up"
->
-      <html lang="en">
-        <body className={inter.className}  >
-                  {/* <Navbar/> */}
-              {children}
-              
-            
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en">
+      <body className={inter.className}>
+      
+          
+          {children}
+        
+      </body>
+    </html>
   );
 }

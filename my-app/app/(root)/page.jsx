@@ -1,108 +1,193 @@
-// "use client"
+"use client";
 
-// import { UserButton } from "@clerk/nextjs"
-// import { Search } from "@mui/icons-material"
-// import { ShoppingBag } from "@mui/icons-material"
-// import { Info } from "@mui/icons-material"
+import Navbar from "../components/Navbar";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import NewCollection from "../components/NewCollection";
+import BestSeller from "../components/BestSeller";
+import "@fontsource/playfair-display";
+import "@fontsource/cormorant-garamond";
+import { FaExchangeAlt, FaHeadset } from "react-icons/fa";
+import { MdOutlineAssignmentReturn } from "react-icons/md";
 
-// import { useState } from "react"
-
-
-
-// const page = () => {
-
-//   const [src,setSrc]=useState('/back.jpeg')
-// const handlechange=(name)=>{
-// setSrc(name)
-
-// }
-
-
-//   return (
-//      <div>
-//  <UserButton signOutRedirectUrl="/sign-in" />
-
-
-
-
-// {/* <div className="h-[500px] bg-blue-950 justify-between items-center flex flex-row">
-//   <div className="w-1/2 flex flex-col gap-2 justify-center  ">
-//   <div className=" px-4 text-blue-500 text-5xl font">30%<span className="font-bold text-6xl text-gray-100">OFF</span>  Limited Offer</div>
-//   <div className=" px-4 text-blue-500 text-5xl">Style that</div>
-//   <div className='  px-4 flex flex-row py-20 gap-3'>
-//     <div onClick={()=>{handlechange('/front.jpg')}}   className='h[15px] w-[15px] rounded-full border-gray-400  border-2  bg-amber-400' ></div>
-//     <div className='h-[15px] w-[15px] rounded-full border-gray-400  border-2 bg-amber-400'></div>
-//     <div className='h-[15px] w-[15px] rounded-full border-gray-400  border-2 bg-amber-400'></div>
-//     <div className='h-[15px] w-[15px] rounded-full border-gray-400  border-2 bg-amber-400'></div>
-//     </div>
-//   </div>
-//   <div className=""><img className="h-[500px] w-[62vw]" src={src}/>
-
-// </div>
-//    </div> */}
-// </div>
-
-//   )
-// }
-
-// export default page
-
-
-"use client"
-
-import { useClerk, useUser } from "@clerk/nextjs"
-import { Search, ShoppingBag, Info } from "@mui/icons-material"
-import { useState } from "react"
+const images = [
+  "/hero5.png",
+  "/hero2.jpeg",
+  "/hero3.jpeg",
+  "/hero4.jpeg"
+];
 
 const Page = () => {
-  const { signOut } = useClerk()
-  const { user } = useUser()
-  const [src, setSrc] = useState('/back.jpeg')
+  const router = useRouter();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [fadeIn, setFadeIn] = useState(true);
 
-  const handleChange = (name) => {
-    setSrc(name)
-  }
+  const handleChange = (index) => {
+    if (index === currentIndex) return;
+    setFadeIn(false);
+    setTimeout(() => {
+      setCurrentIndex(index);
+      setFadeIn(true);
+    }, 250);
+  };
 
-  const handleSignOut = async () => {
-    await signOut({ redirectUrl: "/sign-in" }) // Ensure this matches your route
+  // FIX 1: Preload all hero images on mount
+  // FIX 2: Auto-advance slideshow with setInterval
+  // FIX 3: Removed router from dependency array to prevent infinite redirect loop
+  useEffect(() => {
+    // Preload images
+    images.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+
+    // Auto-advance carousel
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 3500);
+
+    // Auth check
+    try {
+      const storedUser = localStorage.getItem("User");
+
+      if (!storedUser) {
+        router.replace("/sign-up");
+        return () => clearInterval(timer);
+      }
+
+      const user = JSON.parse(storedUser);
+
+      if (!user || !user._id) {
+        localStorage.removeItem("User");
+        router.replace("/sign-up");
+        return () => clearInterval(timer);
+      }
+
+      setCheckingAuth(false);
+    } catch (error) {
+      console.error("Invalid user data:", error);
+      localStorage.removeItem("User");
+      router.replace("/sign-up");
+    }
+
+    return () => clearInterval(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // FIX 3: Empty deps — router is stable in Next.js App Router; avoids redirect loop
+
+  if (checkingAuth) {
+    return null;
   }
 
   return (
-    <div className="p-4">
-      {/* Optional: Show user info */}
-      {user && (
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <p className="text-lg font-semibold">Welcome, {user.fullName}</p>
-            <p className="text-sm text-gray-500">{user.primaryEmailAddress?.emailAddress}</p>
-          </div>
-          <button
-            onClick={handleSignOut}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
-          >
-            Sign Out
-          </button>
-        </div>
-      )}
+    <>
+      <Navbar />
 
-      {/* Uncomment below for your carousel section */}
-      {/* <div className="h-[500px] bg-blue-950 justify-between items-center flex flex-row">
-        <div className="w-1/2 flex flex-col gap-2 justify-center">
-          <div className="px-4 text-blue-500 text-5xl font">
-            30%<span className="font-bold text-6xl text-gray-100">OFF</span> Limited Offer
+      {/* FIX 4: Hero is now responsive — stacks vertically on mobile */}
+      <div className="min-h-[500px] bg-[#f5e3c3] flex flex-col md:flex-row items-center justify-between font-[Cormorant_Garamond] text-[#3c2a21]">
+        <div className="w-full md:w-1/2 flex flex-col gap-2 justify-center pl-8 pr-4 py-8 md:py-0">
+          <div className="text-[#7a3e3e] text-4xl md:text-5xl font">
+            30% <span className="font-bold text-5xl md:text-6xl text-[#c96e38]">OFF</span> Limited Offer
           </div>
-          <div className="px-4 text-blue-500 text-5xl">Style that</div>
-          <div className="px-4 flex flex-row py-20 gap-3">
-            <div onClick={() => handleChange('/front.jpg')} className="h-[15px] w-[15px] rounded-full border-gray-400 border-2 bg-amber-400 cursor-pointer"></div>
-            <div className="h-[15px] w-[15px] rounded-full border-gray-400 border-2 bg-amber-400"></div>
-            <div className="h-[15px] w-[15px] rounded-full border-gray-400 border-2 bg-amber-400"></div>
-            <div className="h-[15px] w-[15px] rounded-full border-gray-400 border-2 bg-amber-400"></div>
+          <div className="text-[#7a3e3e] text-4xl md:text-5xl italic">Style that Defines You</div>
+          <div className="flex flex-row py-8 md:py-16 gap-3">
+            {/* FIX 5: Dots changed from <div> to <button> with aria-label for accessibility */}
+            {images.map((_, index) => (
+              <button
+                key={index}
+                aria-label={`Go to slide ${index + 1}`}
+                onClick={() => handleChange(index)}
+                className={`h-[15px] w-[15px] rounded-full cursor-pointer border-none outline-none ${
+                  currentIndex === index
+                    ? "bg-[#c96e38] scale-110 shadow-md"
+                    : "bg-[#7a3e3e] opacity-40"
+                } transition-all duration-200`}
+              />
+            ))}
           </div>
         </div>
-        <div><img className="h-[500px] w-[62vw]" src={src} alt="Showcase" /></div>
-      </div> */}
-    </div>
-  )
-}
 
-export default Page
+        {/* FIX 6: Image crossfades smoothly between slides using opacity transition */}
+        <div className="h-[260px] w-full md:h-[500px] md:w-[62vw] overflow-hidden rounded-none md:rounded-l-xl shadow-xl">
+          <img
+            className={`h-full w-full object-cover object-center transition-opacity duration-300 ${
+              fadeIn ? "opacity-100" : "opacity-0"
+            }`}
+            src={images[currentIndex]}
+            alt={`Fashion showcase slide ${currentIndex + 1}`}
+          />
+        </div>
+      </div>
+
+      <div className="bg-[#fffaf4]">
+        <NewCollection />
+        <BestSeller />
+
+        <div className="py-14 px-6 mt-8 font-[Cormorant_Garamond] text-[#5a2e2e]">
+          <h2 className="text-4xl font-semibold text-center mb-2">
+            OUR <span className="text-[#c96e38]">POLICY</span>
+          </h2>
+          <p className="text-center text-lg mb-10 text-[#7a3e3e]">
+            Customer-Friendly Policies – Committed to Your Satisfaction and Safety.
+          </p>
+          <div className="flex flex-col md:flex-row justify-center items-center gap-10">
+            <div className="flex flex-col items-center text-center max-w-xs">
+              <FaExchangeAlt className="text-4xl mb-3 text-[#c96e38]" />
+              <h4 className="text-xl font-semibold mb-1">Easy Exchange Policy</h4>
+              <p>Exchange Made Easy – Quick, Simple, and Customer-Friendly Process.</p>
+            </div>
+            <div className="flex flex-col items-center text-center max-w-xs">
+              <MdOutlineAssignmentReturn className="text-4xl mb-3 text-[#c96e38]" />
+              <h4 className="text-xl font-semibold mb-1">7 Days Return Policy</h4>
+              <p>Shop with Confidence – 7 Days Easy Return Guarantee.</p>
+            </div>
+            <div className="flex flex-col items-center text-center max-w-xs">
+              <FaHeadset className="text-4xl mb-3 text-[#c96e38]" />
+              <h4 className="text-xl font-semibold mb-1">Best Customer Support</h4>
+              <p>Trusted Customer Support – Your Satisfaction Is Our Priority.</p>
+            </div>
+          </div>
+        </div>
+
+        <footer className="w-full bg-[#fceedd] text-[#5a2e2e] font-[Cormorant_Garamond] text-sm pt-8 pb-4 px-6 border-t border-[#dabfa6]">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-10">
+
+            <div className="max-w-sm">
+              <div className="flex items-center gap-3 mb-2">
+                <img src="/logobg.png" alt="Vibe Zone Logo" className="w-10 h-10 rounded-full shadow-sm" />
+                <span className="text-xl font-bold italic tracking-wide text-[#c96e38]">VIBE ZONE</span>
+              </div>
+              <p className="leading-snug text-[15px]">
+                Your destination for premium Indian ethnic fashion, curated with care and rooted in culture.
+              </p>
+            </div>
+
+            {/* FIX 7: Footer links changed from <a href="#"> to Next.js <Link> with real routes */}
+            <div className="flex flex-col gap-1 text-[15px]">
+              <h4 className="text-lg font-bold mb-1 text-[#c96e38]">COMPANY</h4>
+              <Link href="/" className="hover:underline">Home</Link>
+              <Link href="/about" className="hover:underline">About Us</Link>
+              <Link href="/delivery" className="hover:underline">Delivery</Link>
+              <Link href="/privacy-policy" className="hover:underline">Privacy Policy</Link>
+            </div>
+
+            <div className="flex flex-col gap-1 text-[15px]">
+              <h4 className="text-lg font-bold mb-1 text-[#c96e38]">GET IN TOUCH</h4>
+              <p>+91-9876543210</p>
+              <p>contact@vibezone.com</p>
+              <p>+1-123-456-7890</p>
+              <p>admin@vibezone.com</p>
+            </div>
+          </div>
+
+          <div className="mt-6 pt-3 border-t border-[#e2cbb2] text-center text-[13px] text-[#7b5241]">
+            © 2025 VibeZone. All Rights Reserved.
+          </div>
+        </footer>
+      </div>
+    </>
+  );
+};
+
+export default Page;

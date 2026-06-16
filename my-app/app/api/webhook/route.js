@@ -173,7 +173,7 @@ console.log("📦 Incoming POST to webhook");
     }
   }
 
-  // Handle user deletion
+ 
   if (eventType === "user.deleted") {
     try {
       const { id } = evt.data;
