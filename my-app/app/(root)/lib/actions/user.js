@@ -43,7 +43,7 @@
 
 
 
-import User from "../models/User";
+import {User} from "../models/User";
 import { connectToDB } from "../mongodb/mongoose";
 
 // Create or update user in MongoDB from Clerk webhook
