@@ -55,7 +55,7 @@ const Navbar = () => {
           </div>
         </Link>
 
-        <Link href="/about">
+        <Link href="/About">
           <div className="flex items-center gap-2 px-4 py-1.5 bg-[#fbe3cb] text-[#7a3e3e] rounded-lg shadow hover:bg-[#f1d1a4] transition font-semibold cursor-pointer text-sm">
             <FaInfoCircle className="text-[#c96e38] text-base" />
             <span>About</span>
