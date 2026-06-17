@@ -19,10 +19,11 @@ const Page = () => {
 
   const getMyOrders = async () => {
     try {
-      const id = JSON.parse(localStorage.getItem("User"))._id;
-      if (!id) return;
+ const email = JSON.parse(localStorage.getItem("User")).email;
 
-      const res = await fetch(`/api/fruit?id=${encodeURIComponent(id)}`, { cache: "no-store" });
+const res = await fetch(
+  `/api/fruit?email=${encodeURIComponent(email)}`
+);
       const data = await res.json();
 console.log(data.result)
       if (data.success) {

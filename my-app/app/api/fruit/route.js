@@ -6,31 +6,37 @@ import { NextResponse } from "next/server";
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get("id"); 
-    let success = false;
 
-    if (!userId) {
+    const email = searchParams.get("email");
+
+    if (!email) {
       return NextResponse.json(
-        { message: "id query parameter is required" },
+        {
+          success: false,
+          message: "Email is required",
+        },
         { status: 400 }
       );
     }
 
-    if (mongoose.connection.readyState === 0) {
-      await mongoose.connect(connectionStr, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-    }
+    await mongoose.connect(connectionStr);
 
-    const result = await Order.find({ id: userId }); 
-    if (result.length > 0) success = true;
+    const result = await Order.find({ email }).sort({
+      createdAt: -1,
+    });
 
-    return NextResponse.json({ result, success });
+    return NextResponse.json({
+      success: true,
+      result,
+    });
   } catch (error) {
-    console.error("Error in GET /api/order/fruit:", error);
+    console.error("Error fetching orders:", error);
+
     return NextResponse.json(
-      { message: "Internal Server Error", error: error.message },
+      {
+        success: false,
+        message: "Internal Server Error",
+      },
       { status: 500 }
     );
   }
