@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter ,useParams} from 'next/navigation';
 import { CurrencyRupee, Star, ChatBubbleOutline, RateReview } from '@mui/icons-material';
 import toast, { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion';
@@ -12,9 +12,10 @@ import CollectionCard from '@/app/components/CollectionCard';
 
 
 
-const Page = ({ params }) => {
+const Page = () => {
 
- const { id } = use(params);
+  const params = useParams();
+  const id = params.id;
   const [post, setPost] = useState({});
   const [size, setSize] = useState('');
   const [reviewRating, setReviewRating] = useState(0);
@@ -32,8 +33,7 @@ const Page = ({ params }) => {
     if (post.category && post.subCategory) fetchRelated();
   }, [post]);
 
-  const getUser = async () => {
-    const id = props.params.id;
+ const getUser = async () => {
     try {
       const res = await fetch(`/api/${id}`);
       const data = await res.json();

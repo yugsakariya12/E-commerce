@@ -21,10 +21,13 @@ export async function POST(request) {
 
     return NextResponse.json({ orderId: order.id }, { status: 200 });
   } catch (error) {
-    console.error("Error creating order:", error);
-    return NextResponse.json(
-      { error: "Error creating order" },
-      { status: 500 }
-    );
-  }
+  console.error("FULL ERROR:", error);
+  console.error("STATUS:", error.statusCode);
+  console.error("DESCRIPTION:", error.error);
+  
+  return NextResponse.json(
+    { error: error.message },
+    { status: 500 }
+  );
+}
 }
