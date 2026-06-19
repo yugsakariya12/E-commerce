@@ -1,21 +1,31 @@
-import mongoose from 'mongoose';
-import { NextResponse } from 'next/server';
-import Post from '@/app/(root)/lib/models/Post';
-import { connectionStr } from '@/app/(root)/lib/db';
+import mongoose from "mongoose";
+import { NextResponse } from "next/server";
+import Post from "@/app/(root)/lib/models/Post";
+import { connectionStr } from "@/app/(root)/lib/db";
 
+export async function GET(request, { params }) {
+  try {
+    const { id } = await params;
 
+    console.log("Product ID:", id);
 
+    await mongoose.connect(connectionStr);
 
-export async function GET(request,content){
+    const details = await Post.findById(id);
 
-    const id = content.params.id;
-    console.log(id);
+    return NextResponse.json({
+      success: true,
+      details,
+    });
+  } catch (error) {
+    console.error(error);
 
-    await mongoose.connect(connectionStr,{useNewUrlParser:true})
-    const details=await Post.findOne({_id:id})
-    
-
-
-    return NextResponse.json({success:true,details})
-
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Something went wrong",
+      },
+      { status: 500 }
+    );
+  }
 }

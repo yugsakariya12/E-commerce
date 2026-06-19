@@ -9,7 +9,12 @@ import Navbar from '@/app/components/Navbar';
 import Loader from '@/app/components/Loader';
 import CollectionCard from '@/app/components/CollectionCard';
 
-const Page = (props) => {
+
+
+
+const Page = ({ params }) => {
+
+ const { id } = use(params);
   const [post, setPost] = useState({});
   const [size, setSize] = useState('');
   const [reviewRating, setReviewRating] = useState(0);
