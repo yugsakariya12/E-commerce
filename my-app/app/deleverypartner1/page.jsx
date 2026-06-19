@@ -62,11 +62,11 @@ const DeliveryPartnerSignup = () => {
     >
       <Toaster position="top-right" />
 
-      {loading && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-          <Loader />
-        </div>
-      )}
+     {loading && (
+  <div className="fixed inset-0 bg-[#fdf6f0] z-50 flex items-center justify-center">
+    <Loader />
+  </div>
+)}
 
      
       <div className="absolute top-2 left-2 z-10">

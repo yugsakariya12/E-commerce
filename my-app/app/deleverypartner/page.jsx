@@ -50,11 +50,11 @@ const deleverypartner = () => {
     <div className="min-h-screen w-full bg-cover bg-center flex items-start justify-end overflow-hidden font-[Poppins] px-10 pt-6 relative" style={{ backgroundImage: "url('/bg-vr.jpg')" }}>
       <Toaster position="top-right" />
 
-      {loading && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-          <Loader />
-        </div>
-      )}
+     {loading && (
+  <div className="fixed inset-0 bg-[#fdf6f0] z-50 flex items-center justify-center">
+    <Loader />
+  </div>
+)}
 
      
       <div className="absolute top-1 left-1 z-10">

@@ -1,10 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { FaPlus, FaClipboardList } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { FaPlus, FaClipboardList, FaSignOutAlt } from "react-icons/fa";
 import Loader from "@/app/components/Loader";
 
 const AdminDashboard = () => {
+  const router = useRouter();
   const [myOrders, setMyOrders] = useState([]);
   const [feedPost, setFeedPost] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,24 +20,16 @@ const AdminDashboard = () => {
 
         const id1 = adminData._id;
 
-      
         const [ordersRes, feedRes] = await Promise.all([
           fetch(`/api/order/allorder/${id1}`, { method: "GET" }),
           fetch(`/api/formdata/${id1}`, { method: "GET" }),
         ]);
 
-        let ordersData = await ordersRes.json();
-        let feedData = await feedRes.json();
-  setFeedPost(feedData.result );
-console.log(feedPost)
-  
+        const ordersData = await ordersRes.json();
+        const feedData = await feedRes.json();
+
+        setFeedPost(feedData.result || []);
         if (ordersData.success) setMyOrders(ordersData.result || []);
-      
-
-  
-
-        
-
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
         setMyOrders([]);
@@ -47,6 +41,13 @@ console.log(feedPost)
 
     fetchData();
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("Admin");
+    localStorage.removeItem("User");
+    localStorage.removeItem("delivery");
+    window.location.href = "/";
+  };
 
   return (
     <div className="min-h-screen bg-[#f5e3c3]">
@@ -62,7 +63,7 @@ console.log(feedPost)
           </span>
         </div>
 
-        <div className="flex gap-3 flex-wrap justify-center">
+        <div className="flex gap-3 flex-wrap justify-center items-center">
           <Link href="/AddItem">
             <div className="flex items-center gap-2 px-4 py-2 bg-[#fbe3cb] text-[#7a3e3e] rounded-lg shadow hover:bg-[#f1d1a4] transition font-semibold cursor-pointer">
               <FaPlus className="text-[#c96e38]" />
@@ -81,6 +82,14 @@ console.log(feedPost)
               <span>View Orders</span>
             </div>
           </Link>
+
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 bg-[#7a3e3e] text-[#fbe3cb] rounded-lg shadow hover:bg-[#5a2e2e] transition font-semibold cursor-pointer"
+          >
+            <FaSignOutAlt className="text-[#fbe3cb]" />
+            <span>Logout</span>
+          </button>
         </div>
       </nav>
 
@@ -94,7 +103,7 @@ console.log(feedPost)
                 No. of Products
               </h3>
               <div className="bg-[#c96e38] text-white text-lg font-bold h-10 w-10 rounded-full flex items-center justify-center shadow">
-                {feedPost?.length}
+                {feedPost?.length || 0}
               </div>
             </div>
             <div className="bg-[#fbe3cb] border border-[#e2b084] rounded-lg shadow-md p-6 flex flex-col items-center justify-center">

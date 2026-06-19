@@ -1,3 +1,8 @@
+
+
+
+
+
 "use client";
 
 import Navbar from "../components/Navbar";
@@ -8,7 +13,7 @@ import NewCollection from "../components/NewCollection";
 import BestSeller from "../components/BestSeller";
 import "@fontsource/playfair-display";
 import "@fontsource/cormorant-garamond";
-import { FaExchangeAlt, FaHeadset } from "react-icons/fa";
+import { FaExchangeAlt, FaHeadset, FaUser, FaStore, FaTruck } from "react-icons/fa";
 import { MdOutlineAssignmentReturn } from "react-icons/md";
 
 const images = [
@@ -23,6 +28,7 @@ const Page = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [fadeIn, setFadeIn] = useState(true);
+  const [showRoleSelect, setShowRoleSelect] = useState(false); // NEW
 
   const handleChange = (index) => {
     if (index === currentIndex) return;
@@ -33,9 +39,13 @@ const Page = () => {
     }, 250);
   };
 
-  // FIX 1: Preload all hero images on mount
-  // FIX 2: Auto-advance slideshow with setInterval
-  // FIX 3: Removed router from dependency array to prevent infinite redirect loop
+  // NEW: role -> route map, then redirect
+  const handleRoleSelect = (role) => {
+    if (role === "user") router.push("/sign-up");
+    else if (role === "owner") router.push("/admin-sign-up");
+    else if (role === "delivery") router.push("/deleverypartner");
+  };
+
   useEffect(() => {
     // Preload images
     images.forEach((src) => {
@@ -48,12 +58,14 @@ const Page = () => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
     }, 3500);
 
-    // Auth check
+    // Auth check — CHANGED: instead of auto-redirecting to /sign-up,
+    // show the role selection screen if no valid user is found
     try {
       const storedUser = localStorage.getItem("User");
 
       if (!storedUser) {
-        router.replace("/sign-up");
+        setShowRoleSelect(true);
+        setCheckingAuth(false);
         return () => clearInterval(timer);
       }
 
@@ -61,27 +73,74 @@ const Page = () => {
 
       if (!user || !user._id) {
         localStorage.removeItem("User");
-        router.replace("/sign-up");
+        setShowRoleSelect(true);
+        setCheckingAuth(false);
         return () => clearInterval(timer);
       }
 
+      // valid logged-in user — show homepage normally
       setCheckingAuth(false);
     } catch (error) {
       console.error("Invalid user data:", error);
       localStorage.removeItem("User");
-      router.replace("/sign-up");
+      setShowRoleSelect(true);
+      setCheckingAuth(false);
     }
 
     return () => clearInterval(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // FIX 3: Empty deps — router is stable in Next.js App Router; avoids redirect loop
+  }, []);
 
   if (checkingAuth) {
     return null;
   }
 
+  // NEW: Role selection screen — shown instead of auto-redirect
+  if (showRoleSelect) {
+    return (
+      <div className="min-h-screen bg-[#fffaf4] flex flex-col items-center justify-center font-[Cormorant_Garamond] text-[#3c2a21] px-6">
+        <img src="/logobg.png" alt="Vibe Zone Logo" className="w-16 h-16 rounded-full shadow-md mb-6" />
+        <h1 className="text-3xl md:text-4xl font-semibold mb-2 text-center">
+          Welcome to <span className="text-[#c96e38] italic">VIBE ZONE</span>
+        </h1>
+        <p className="text-lg text-[#7a3e3e] mb-10 text-center">
+          Continue as
+        </p>
+
+        <div className="flex flex-col md:flex-row gap-6 w-full max-w-2xl">
+          <button
+            onClick={() => handleRoleSelect("user")}
+            className="flex-1 flex flex-col items-center gap-3 bg-[#fceedd] hover:bg-[#f5e3c3] border border-[#dabfa6] rounded-xl py-8 px-4 shadow-sm hover:shadow-md transition-all duration-200"
+          >
+            <FaUser className="text-4xl text-[#c96e38]" />
+            <span className="text-xl font-semibold">User</span>
+            <span className="text-sm text-[#7a3e3e]">Login / Sign Up</span>
+          </button>
+
+          <button
+            onClick={() => handleRoleSelect("owner")}
+            className="flex-1 flex flex-col items-center gap-3 bg-[#fceedd] hover:bg-[#f5e3c3] border border-[#dabfa6] rounded-xl py-8 px-4 shadow-sm hover:shadow-md transition-all duration-200"
+          >
+            <FaStore className="text-4xl text-[#c96e38]" />
+            <span className="text-xl font-semibold">Owner</span>
+            <span className="text-sm text-[#7a3e3e]">Login / Sign Up</span>
+          </button>
+
+          <button
+            onClick={() => handleRoleSelect("delivery")}
+            className="flex-1 flex flex-col items-center gap-3 bg-[#fceedd] hover:bg-[#f5e3c3] border border-[#dabfa6] rounded-xl py-8 px-4 shadow-sm hover:shadow-md transition-all duration-200"
+          >
+            <FaTruck className="text-4xl text-[#c96e38]" />
+            <span className="text-xl font-semibold">Delivery Partner</span>
+            <span className="text-sm text-[#7a3e3e]">Login / Sign Up</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ... rest of your existing homepage JSX (Navbar, hero, NewCollection, etc.) stays exactly the same
   return (
-    <>
+   <>
       <Navbar />
 
       {/* FIX 4: Hero is now responsive — stacks vertically on mobile */}

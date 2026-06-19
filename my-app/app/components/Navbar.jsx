@@ -1,31 +1,34 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useUser, UserButton } from '@clerk/nextjs';
 import Image from 'next/image';
 import {
   FaTags,
   FaInfoCircle,
   FaShoppingCart,
   FaClipboardCheck,
-  FaHome
+  FaHome,
+  FaSignOutAlt
 } from 'react-icons/fa';
 
 const Navbar = () => {
   const router = useRouter();
-  // const { isSignedIn, isLoaded } = useUser();
 
-  // useEffect(() => {
-  //   if (isLoaded && !isSignedIn) {
-  //     router.push('/sign-up');
-  //   }
-  // }, [isLoaded, isSignedIn, router]);
+  const handleLogout = () => {
+    // Clear all role/session data so "/" shows the role-select screen again
+    localStorage.removeItem('User');
+    localStorage.removeItem('Owner');
+    localStorage.removeItem('DeliveryPartner');
+
+    // Full reload so the homepage's useEffect re-checks localStorage from scratch
+    window.location.href = '/';
+  };
 
   return (
     <nav className="bg-[#c96e38] h-[10vh] shadow-md px-6 flex items-center justify-between flex-wrap gap-4">
-     
+
       <div className="flex items-center space-x-3">
         <Image
           src="/logobg.png"
@@ -39,7 +42,7 @@ const Navbar = () => {
         </span>
       </div>
 
-     
+
       <div className="flex gap-3 flex-wrap justify-center items-center">
         <Link href="/">
           <div className="flex items-center gap-2 px-4 py-1.5 bg-[#fbe3cb] text-[#7a3e3e] rounded-lg shadow hover:bg-[#f1d1a4] transition font-semibold cursor-pointer text-sm">
@@ -76,7 +79,14 @@ const Navbar = () => {
           </div>
         </Link>
 
-     
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 px-4 py-1.5 bg-[#7a3e3e] text-[#fbe3cb] rounded-lg shadow hover:bg-[#5a2e2e] transition font-semibold cursor-pointer text-sm"
+        >
+          <FaSignOutAlt className="text-[#fbe3cb] text-base" />
+          <span>Logout</span>
+        </button>
+
       </div>
     </nav>
   );
