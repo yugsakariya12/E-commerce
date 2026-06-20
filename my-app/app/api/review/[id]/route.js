@@ -4,7 +4,13 @@ import Post from '@/app/(root)/lib/models/Post';
 import { connectionStr } from '@/app/(root)/lib/db';
 
 export async function PUT(req, context) {
-  const { id } = context.params; 
+    const { id } = await context.params;
+  
+
+    console.log("ROUTE HIT");
+
+ 
+  console.log("ID =", id);
   const { rating, message } = await req.json();
 
   await mongoose.connect(connectionStr, { useNewUrlParser: true });

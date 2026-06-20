@@ -7,9 +7,9 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const email = searchParams.get("email");
+   const userId = searchParams.get("userId");
 
-    if (!email) {
+if (!userId) {
       return NextResponse.json(
         {
           success: false,
@@ -21,9 +21,9 @@ export async function GET(request) {
 
     await mongoose.connect(connectionStr);
 
-    const result = await Order.find({ email }).sort({
-      createdAt: -1,
-    });
+const result = await Order.find({ userId }).sort({
+  createdAt: -1,
+});
 
     return NextResponse.json({
       success: true,

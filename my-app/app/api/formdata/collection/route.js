@@ -12,3 +12,5 @@ export async function GET(request) {
   const data = await Post.find({});
   return NextResponse.json({ result: data });
 }
+
+

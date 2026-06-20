@@ -138,12 +138,12 @@ const Page = () => {
     );
   }
 
-  // ... rest of your existing homepage JSX (Navbar, hero, NewCollection, etc.) stays exactly the same
+
   return (
    <>
       <Navbar />
 
-      {/* FIX 4: Hero is now responsive — stacks vertically on mobile */}
+    
       <div className="min-h-[500px] bg-[#f5e3c3] flex flex-col md:flex-row items-center justify-between font-[Cormorant_Garamond] text-[#3c2a21]">
         <div className="w-full md:w-1/2 flex flex-col gap-2 justify-center pl-8 pr-4 py-8 md:py-0">
           <div className="text-[#7a3e3e] text-4xl md:text-5xl font">
@@ -151,7 +151,7 @@ const Page = () => {
           </div>
           <div className="text-[#7a3e3e] text-4xl md:text-5xl italic">Style that Defines You</div>
           <div className="flex flex-row py-8 md:py-16 gap-3">
-            {/* FIX 5: Dots changed from <div> to <button> with aria-label for accessibility */}
+          
             {images.map((_, index) => (
               <button
                 key={index}
@@ -167,7 +167,7 @@ const Page = () => {
           </div>
         </div>
 
-        {/* FIX 6: Image crossfades smoothly between slides using opacity transition */}
+     
         <div className="h-[260px] w-full md:h-[500px] md:w-[62vw] overflow-hidden rounded-none md:rounded-l-xl shadow-xl">
           <img
             className={`h-full w-full object-cover object-center transition-opacity duration-300 ${
@@ -222,7 +222,7 @@ const Page = () => {
               </p>
             </div>
 
-            {/* FIX 7: Footer links changed from <a href="#"> to Next.js <Link> with real routes */}
+     
             <div className="flex flex-col gap-1 text-[15px]">
               <h4 className="text-lg font-bold mb-1 text-[#c96e38]">COMPANY</h4>
               <Link href="/" className="hover:underline">Home</Link>

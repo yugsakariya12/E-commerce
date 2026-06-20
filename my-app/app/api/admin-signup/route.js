@@ -18,64 +18,72 @@ export async function POST(request) {
     // LOGIN
     // ==========================
 
-    if (
-      contentType?.includes(
-        "application/json"
-      )
-    ) {
-      const payload =
-        await request.json();
+    // ==========================
+// LOGIN
+// ==========================
 
-      if (payload.login) {
-        const admin =
-          await AdminSchema.findOne({
-            email: payload.email
-              .trim()
-              .toLowerCase(),
-          });
+if (contentType?.includes("application/json")) {
+  const payload = await request.json();
 
-        if (!admin) {
-          return NextResponse.json(
-            {
-              success: false,
-              message:
-                "Invalid email or password",
-            },
-            { status: 401 }
-          );
-        }
+  console.log("================================");
+  console.log("LOGIN REQUEST RECEIVED");
+  console.log("EMAIL:", payload.email);
+  console.log("LOGIN FLAG:", payload.login);
 
-        const isMatch =
-          await bcrypt.compare(
-            payload.password,
-            admin.password
-          );
+  if (payload.login) {
+    const admin = await AdminSchema.findOne({
+      email: payload.email.trim().toLowerCase(),
+    });
 
-        if (!isMatch) {
-          return NextResponse.json(
-            {
-              success: false,
-              message:
-                "Invalid email or password",
-            },
-            { status: 401 }
-          );
-        }
+    console.log("ADMIN FOUND:", admin);
 
-        const adminObj =
-          admin.toObject();
+    if (!admin) {
+      console.log("❌ ADMIN NOT FOUND");
 
-        delete adminObj.password;
-
-        return NextResponse.json(
-          {
-            success: true,
-            result: adminObj,
-          },
-          { status: 200 }
-        );
-      }
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Invalid email or password",
+        },
+        { status: 401 }
+      );
     }
+
+    console.log("DB PASSWORD:", admin.password);
+
+    const isMatch = await bcrypt.compare(
+      payload.password,
+      admin.password
+    );
+
+    console.log("PASSWORD MATCH:", isMatch);
+
+    if (!isMatch) {
+      console.log("❌ PASSWORD MISMATCH");
+
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Invalid email or password",
+        },
+        { status: 401 }
+      );
+    }
+
+    console.log("✅ LOGIN SUCCESS");
+
+    const adminObj = admin.toObject();
+    delete adminObj.password;
+
+    return NextResponse.json(
+      {
+        success: true,
+        result: adminObj,
+      },
+      { status: 200 }
+    );
+  }
+}
 
     // ==========================
     // SIGNUP

@@ -19,10 +19,10 @@ const Page = () => {
 
   const getMyOrders = async () => {
     try {
- const email = JSON.parse(localStorage.getItem("User")).email;
+const userId = JSON.parse(localStorage.getItem("User"))._id;
 
 const res = await fetch(
-  `/api/fruit?email=${encodeURIComponent(email)}`
+  `/api/fruit?userId=${encodeURIComponent(userId)}`
 );
       const data = await res.json();
 console.log(data.result)

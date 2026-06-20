@@ -11,8 +11,14 @@ const orderSchema = new mongoose.Schema(
     pincode: { type: String, required: true },
     country: { type: String, required: true },
     phone: { type: String, required: true },
-id:{type:mongoose.Schema.Types.ObjectId},
-    totalAmount: { type: Number, required: true }, // in paise or rupees as per your logic
+userId: {
+  type: mongoose.Schema.Types.ObjectId,
+  required: true,
+},
+totalAmount: {
+  type: Number,
+  required: true,
+},
 products: [mongoose.Schema.Types.ObjectId],
   deliveryBoyId: {
   type: mongoose.Schema.Types.ObjectId,
